@@ -1,0 +1,14 @@
+{
+  "name": "loop-browser",
+  "description": "Skills for working in Microsoft Loop through your own signed-in browser.",
+  "owner": {
+    "name": "Bryon Williams"
+  },
+  "plugins": [
+    {
+      "name": "loop-browser",
+      "source": "./",
+      "description": "Read, search, create and edit Microsoft Loop pages through your own signed-in browser (Claude in Chrome)."
+    }
+  ]
+}

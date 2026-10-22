@@ -3,6 +3,29 @@
 Tool names below are the Claude in Chrome tools (`mcp__claude-in-chrome__…`). Batch predictable sequences with
 `browser_batch`. Always take a screenshot before clicking somewhere you haven't seen.
 
+## Editor API (primary path)
+
+`scripts/loop-helpers.js` finds the editors on the open page:
+- The **body** editor is the editable region labelled `Canvas`, ignoring nested blocks and tables.
+- The **title** editor is the region labelled `Title`.
+
+It reaches each editor object through the page's React tree and calls Loop's own methods: `getMarkdown()` to read,
+`appendHtml()` to append and `setHtml()` to replace. Loop applies the change as a normal edit and syncs it, so writes
+persist and show up live for other people on the page.
+
+| Comparison (measured on a small test page) | Editor API | Clipboard fallback |
+|---|---|---|
+| Tool calls per read | 1, plus 1 per 800-character chunk | about 6–7 (click, select, screenshot, copy, capture, paste, info), plus chunks |
+| Tool calls per append | 1 | about 10–12, including verification screenshots |
+| In-page time | read about 15 ms; append under 1 s including a verification read | 10 s or more of deliberate waits and keystrokes |
+| Placement | end of page, or whole body | anywhere the cursor can go |
+| Depends on | Loop internals (may change with Loop updates) | Loop's UI shortcuts (Copy as Markdown, Markdown paste) |
+
+Every browser tool call also returns the tab context, and Loop's URLs are long. So fewer calls means far fewer
+tokens. Prefer the editor API, and keep the clipboard path for mid-page insertion and as the fallback.
+
+The rest of this file covers the clipboard fallback and the UI.
+
 ## Why it works this way
 
 - **Synthetic events are ignored.** Loop's editor only trusts real input. A paste event built in JavaScript

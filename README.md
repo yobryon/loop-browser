@@ -5,8 +5,12 @@ write it. This plugin teaches Claude to work in Loop **the way you do**: through
 the [Claude in Chrome](https://claude.com/chrome) tools. It reads pages as Markdown and writes Markdown that Loop
 turns into native headings, lists, checklists, tables and code blocks.
 
-- **Uses Loop's own features:** Copy as Markdown and Markdown paste, driven with real keystrokes.
-- **No credentials or tokens:** no API calls, no back-end access. Claude can only do what you can do in Loop.
+- **Uses Loop's own editor:** a small helper calls the editor already running in your Loop tab. It reads pages as
+  Markdown and appends HTML that Loop converts to native blocks, in one tool call each.
+- **Clipboard fallback:** if the editor isn't reachable, it uses Loop's Copy as Markdown and Markdown paste, driven with
+  real keystrokes.
+- **No credentials or tokens:** no back-end calls. Loop syncs every change itself, and Claude can only do what you can
+  do in Loop.
 - **Built-in guardrails:** it writes only where you ask, previews before larger writes, confirms before replacing or
   deleting, and treats page content as data rather than instructions.
 
@@ -43,11 +47,10 @@ directly with `/loop-browser:microsoft-loop`.
 
 | Action | How the skill does it |
 |---|---|
-| **Read** | Selects the page body, uses Loop's **Copy as Markdown** (`Ctrl+Shift+C`), and captures the clipboard through a temporary invisible text box. Nothing is inserted into the page. |
-| **Write** | Puts the Markdown into a temporary invisible text box, copies it with a real `Ctrl+C`, and pastes it into the page with a real `Ctrl+V`. Loop converts the pasted Markdown. |
+| **Read** | Calls the open page's editor (`getMarkdown`) and returns the page as Markdown |
+| **Write** | Calls the editor's `appendHtml` (or `setHtml`, to replace the whole body, only with your confirmation). Loop converts the HTML to native headings, lists, checklists, tables and code blocks, and syncs the edit. |
+| **Fallback** | Copy as Markdown and Markdown paste with real keystrokes, through your clipboard (its previous contents are overwritten) |
 | **Navigate** | Uses the normal Loop UI: home, workspaces, the page tree, search and recent pages |
-
-Your clipboard is used as the transfer channel, so its previous contents are overwritten.
 
 See [`skills/microsoft-loop/SKILL.md`](skills/microsoft-loop/SKILL.md) and its `reference/` folder for details.
 
@@ -57,7 +60,10 @@ See [`skills/microsoft-loop/SKILL.md`](skills/microsoft-loop/SKILL.md) and its `
 - **Speed:** it's as fast as driving a browser, so seconds per action rather than milliseconds.
 - **Not supported as Markdown:** images, @mentions, dates and specialised Loop components (voting, status trackers).
   Use the Loop UI for those.
-- **UI changes:** if Loop changes its UI or shortcuts, the techniques may need updating.
+- **Undocumented internals:** the editor API relies on Loop internals that may change with Loop updates. The skill
+  then falls back to the clipboard method until the helper is updated.
+- **Mid-page insertion:** inserting in the middle of a page (e.g. under a specific heading) uses the slower clipboard
+  method.
 
 ## Disclaimer
 

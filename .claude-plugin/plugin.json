@@ -1,7 +1,7 @@
 {
   "name": "loop-browser",
   "displayName": "Microsoft Loop (browser)",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Skills that let Claude read, search, create and edit Microsoft Loop pages through the user's own signed-in browser (Claude in Chrome), converting to and from Markdown.",
   "author": { "name": "Bryon Williams" },
   "homepage": "https://github.com/yobryon/loop-browser",

@@ -8,7 +8,8 @@
     {
       "name": "loop-browser",
       "source": "./",
-      "description": "Read, search, create and edit Microsoft Loop pages through your own signed-in browser (Claude in Chrome)."
+      "description": "Read, search, create and edit Microsoft Loop pages through your own signed-in browser (Claude in Chrome).",
+      "version": "0.2.0"
     }
   ]
 }
